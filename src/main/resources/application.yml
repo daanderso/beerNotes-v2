@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: beerNotes_v2
+  mvc:
+    pathmatch:
+      matching-strategy: ANT_PATH_MATCHER
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password: password
+  h2:
+    console:
+      enabled: true
+logging:
+    level:
+      org:
+        anderson:
+          beerNotes2: DEBUG
+    pattern:
+      console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+springdoc: # OpenAPI definition available at http://localhost:8080/swagger-ui/index.html#/
+  api-docs:
+    path: /api-docs  # accessible at localhost:8080/api-docs
+
