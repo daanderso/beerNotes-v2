@@ -2,6 +2,7 @@ package org.anderson.beerNotes_v2.controllers;
 
 import java.util.List;
 
+import org.anderson.beerNotes_v2.dto.BeerRequest;
 import org.anderson.beerNotes_v2.entity.Beer;
 import org.anderson.beerNotes_v2.services.BeerService;
 import org.springframework.http.HttpStatus;
@@ -57,11 +58,11 @@ public class BeerController {
         @ApiResponse(responseCode = "500", description = COULD_NOT_FULFILL_REQUEST_RESPONSE_500, 
             content = @Content) })
     @PostMapping("/saveBeer")
-    public ResponseEntity<?> saveBeer(@RequestBody Beer beer) {
-        log.info("Saving new beer: {}", beer);
-        boolean saved = beerService.saveBeer(beer);
-        if (saved) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(beer);
+    public ResponseEntity<?> saveBeer(@RequestBody BeerRequest request) {
+        log.info("Saving new beer: {}", request);
+        Beer saved = beerService.saveBeer(request);
+        if (saved != null) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved); // frontend receives the real generated id
         }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(COULD_NOT_FULFILL_REQUEST_RESPONSE_500);
     }
@@ -92,6 +93,27 @@ public class BeerController {
         }
         // result > 1
         return ResponseEntity.status(HttpStatus.CONFLICT).body(BEER_CONFLICT_RESPONSE_409 + " Affected: " + result);
+    }
+
+    @Operation(summary = "Delete a beer by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = BEER_DELETED_RESPONSE_200,
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = INVALID_REQUEST_RESPONSE_400,
+                    content = @Content),
+            @ApiResponse(responseCode = "404", description = BEER_NOT_FOUND_RESPONSE_404,
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = COULD_NOT_FULFILL_REQUEST_RESPONSE_500,
+                    content = @Content) })
+    @DeleteMapping("/deleteBeerById/{id}")
+    public ResponseEntity<?> deleteBeerById(@PathVariable Long id) {
+        log.info("Attempting to delete beer with id: {}", id);
+        boolean result = beerService.deleteBeerById(id);
+
+        if (!result) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BEER_NOT_FOUND_RESPONSE_404);
+        }
+        return ResponseEntity.ok(BEER_DELETED_RESPONSE_200);
     }
 
     @Operation(summary = "Update an existing beer note")

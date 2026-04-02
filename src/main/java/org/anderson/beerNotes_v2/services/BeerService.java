@@ -3,12 +3,14 @@ package org.anderson.beerNotes_v2.services;
 import java.util.Collections;
 import java.util.List;
 
+import org.anderson.beerNotes_v2.dto.BeerRequest;
 import org.anderson.beerNotes_v2.entity.Beer;
 import org.anderson.beerNotes_v2.repos.BeerRepository;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -29,23 +31,26 @@ public class BeerService {
         }
     }
 
-    public boolean saveBeer(Beer beer){
-        try{
+    public Beer saveBeer(BeerRequest request) {
+        try {
+            Beer beer = new Beer();
+            beer.setName(request.getName());
+            beer.setStyle(request.getStyle());
+            beer.setBrewery(request.getBrewery());
+            beer.setOrigin(request.getOrigin());
+            beer.setNote(request.getNote());
             log.info("Attempting to save new beer note for {}", beer.getName());
-            beerRepo.save(beer);
-            log.info("Beer {} saved successfully to DB", beer.getName());
-            return true;
-        }catch(Exception e){
+            Beer saved = beerRepo.save(beer);
+            log.info("Beer {} saved successfully to DB with id {}", saved.getName(), saved.getId());
+            return saved;
+        } catch (Exception e) {
             log.error("Error saving beer. Beer was not saved successfully");
             log.error("EXCEPTION - error saving beer note", e);
-            return false;
+            return null;
         }
     }
 
-    /**
-     * Delete beers by name and return the affected row count.
-     * Returns: >=0 number of deleted rows, -1 on error
-     */
+
     public int deleteBeer(String beerName) {
         try{
             log.info("Attempting to delete beer {}", beerName);
@@ -65,7 +70,8 @@ public class BeerService {
         }
     }
 
-    public boolean deleteBeerbyId(Long id) {
+    @Transactional
+    public boolean deleteBeerById(Long id) {
         try{
             log.info("Attempting to delete beer by id: {}", id);
             if (!beerRepo.existsById(id)) {
@@ -82,9 +88,6 @@ public class BeerService {
         }
     }
 
-    /**
-     * Update beer note(s) identified by name. Returns number of rows updated, or -1 on error.
-     */
     public int updateBeerNote(String beerName, String note) {
         try{
             log.info("Attempting to update note for beer: {}", beerName);

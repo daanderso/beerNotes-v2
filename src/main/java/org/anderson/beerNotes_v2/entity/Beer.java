@@ -13,10 +13,9 @@ import lombok.Data;
 @Entity
 public class Beer {
 
- 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     private String name;
     private String style;
     private String brewery;

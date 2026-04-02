@@ -6,17 +6,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.ListCrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-import jakarta.transaction.Transactional;
 @Repository
 public interface BeerRepository extends ListCrudRepository<Beer, Long> {
     
-@Transactional    
+ @Transactional
 @Modifying
 @Query("DELETE FROM Beer b WHERE b.name = :name")
 int deleteByName(@Param("name") String name);
 
-@Transactional
+ @Transactional
 @Modifying
 @Query("UPDATE Beer b SET b.note = :note WHERE b.name = :name")
 int updateBeerNote(@Param("name") String name, @Param("note") String note);
