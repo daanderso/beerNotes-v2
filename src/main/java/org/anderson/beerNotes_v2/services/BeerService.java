@@ -106,4 +106,21 @@ public class BeerService {
             return -1;
         }
     }
+
+    public int updateFullBeer(BeerRequest request) {
+        try {
+            log.info("Attempting to update full beer for name: {}", request.getName());
+            if (!beerRepo.existsByName(request.getName())) {
+                log.warn("No beer found with name '{}'; beer not updated", request.getName());
+                return 0;
+            }
+            // Update allowed fields in-place (efficient, no entity loading)
+            int affected = beerRepo.updateBeerFields(request.getName(), request.getStyle(), request.getBrewery(), request.getOrigin(), request.getNote());
+            log.info("Beer update completed for {} ({} rows)", request.getName(), affected);
+            return affected;
+        } catch (Exception e) {
+            log.error("Beer update failed for name: {}", request.getName(), e);
+            return -1;
+        }
+    }
 }

@@ -144,5 +144,34 @@ class BeerControllerTest {
             assertTrue(response.getBody().toString().contains("Conflict"));
         }
     }
-}
 
+    @Nested
+    class UpdateFullBeer {
+        @Test
+        void returnsInternalServerError_whenServiceReturnsMinusOne() {
+            when(beerService.updateFullBeer(any())).thenReturn(-1);
+            ResponseEntity<?> response = beerController.updateFullBeer(new BeerRequest());
+            assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        }
+        @Test
+        void returnsNotFound_whenServiceReturnsZero() {
+            when(beerService.updateFullBeer(any())).thenReturn(0);
+            ResponseEntity<?> response = beerController.updateFullBeer(new BeerRequest());
+            assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        }
+        @Test
+        void returnsOk_whenServiceReturnsOne() {
+            when(beerService.updateFullBeer(any())).thenReturn(1);
+            ResponseEntity<?> response = beerController.updateFullBeer(new BeerRequest());
+            assertEquals(HttpStatus.OK, response.getStatusCode());
+        }
+        @Test
+        void returnsConflict_whenServiceReturnsGreaterThanOne() {
+            when(beerService.updateFullBeer(any())).thenReturn(2);
+            ResponseEntity<?> response = beerController.updateFullBeer(new BeerRequest());
+            assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+            assertNotNull(response.getBody());
+            assertTrue(response.getBody().toString().contains("Conflict"));
+        }
+    }
+}

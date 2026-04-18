@@ -28,6 +28,7 @@ public class BeerController {
     private static final String BEER_DELETED_RESPONSE_200 = "DELETE operation completed Successfully";
     private static final String BEER_UPDATED_RESPONSE_200 = "UPDATE operation completed Successfully";
     private static final String BEER_SAVED_RESPONSE_201 = "SAVE Operation completed Successfully. Beer saved to DB";
+    private static final String BEER_UPDATED_FULL_RESPONSE_200 = "Full beer update operation completed Successfully";
     private static final String INVALID_REQUEST_RESPONSE_400 = "Invalid request possibly due to malformed syntax.";
     private static final String BEER_NOT_FOUND_RESPONSE_404 = "Beer not found. Object not found in DB.";
     private static final String COULD_NOT_FULFILL_REQUEST_RESPONSE_500 = "Server Error. Server encountered an unexpected condition and couldn't fulfill request.";
@@ -140,6 +141,34 @@ public class BeerController {
         }
         if (result == 1) {
             return ResponseEntity.ok(BEER_UPDATED_RESPONSE_200);
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(BEER_CONFLICT_RESPONSE_409 + " Updated: " + result);
+    }
+
+    @Operation(summary = "Update an  beer note style, brewery, origin, note")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = BEER_UPDATED_FULL_RESPONSE_200,
+            content = @Content),
+        @ApiResponse(responseCode = "400", description = INVALID_REQUEST_RESPONSE_400,
+            content = @Content),
+        @ApiResponse(responseCode = "404", description = BEER_NOT_FOUND_RESPONSE_404,
+            content = @Content),
+        @ApiResponse(responseCode = "409", description = BEER_CONFLICT_RESPONSE_409,
+            content = @Content),
+        @ApiResponse(responseCode = "500", description = COULD_NOT_FULFILL_REQUEST_RESPONSE_500,
+            content = @Content) })
+    @PutMapping("/updateFullBeer")
+    public ResponseEntity<?> updateFullBeer(@RequestBody BeerRequest request) {
+        log.info("Updating full beer object: {}", request);
+        int result = beerService.updateFullBeer(request);
+        if (result == -1) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(COULD_NOT_FULFILL_REQUEST_RESPONSE_500);
+        }
+        if (result == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(BEER_NOT_FOUND_RESPONSE_404);
+        }
+        if (result == 1) {
+            return ResponseEntity.ok(BEER_UPDATED_FULL_RESPONSE_200);
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(BEER_CONFLICT_RESPONSE_409 + " Updated: " + result);
     }
