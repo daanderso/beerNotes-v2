@@ -58,16 +58,25 @@ Navigate to your React frontend project directory and run:
 npm start
 ```
 
-The frontend will be available at: http://localhost:3000
+The frontend will be available at: http://localhost:5173/
 
 ## API Endpoints
 
+### GET Endpoints
 - `GET /api/beernotes/beerlist` - Retrieve all beers
-- `POST /api/beernotes/saveBeer` - Save a new beer
-- `DELETE /api/beernotes/deleteBeer/{beerName}` - Delete a beer by name
-- `PUT /api/beernotes/updateBeerNote/{beerName}` - Update beer notes
 
-For detailed API documentation, visit the Swagger UI.
+### POST Endpoints
+- `POST /api/beernotes/saveBeer` - Save a new beer note (request body: BeerRequest with name, style, brewery, origin, note)
+
+### PUT Endpoints
+- `PUT /api/beernotes/updateBeerNote/{beerName}` - Update beer note by name (request body: note text)
+- `PUT /api/beernotes/updateFullBeer` - Update beer fields (style, brewery, origin, note) by name (request body: BeerRequest)
+
+### DELETE Endpoints
+- `DELETE /api/beernotes/deleteBeer/{beerName}` - Delete a beer by name
+- `DELETE /api/beernotes/deleteBeerById/{id}` - Delete a beer by id
+
+For detailed API documentation, response codes, and example payloads, visit the Swagger UI at http://localhost:8080/swagger-ui/index.html.
 
 ## Database
 
@@ -99,4 +108,4 @@ http://localhost:8080/beernotes
 ### Frontend React Notes
 npm start  - builds/runs react app
 
-http://localhost:3000  - When running frontend/ webapp alone
+Local: http://localhost:5173/ - When running frontend
